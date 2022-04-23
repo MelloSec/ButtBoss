@@ -27,7 +27,8 @@ if ($url -eq $null -or $url[0] -eq $null) {
 	}
 return $url
 }
-
+# New try for buttseeds
+# ($lines = (gci buttseeds.txt | Get-Member))
 # Main method for obtaining sweet butt shots for grand plan  
 $topic = "juicy butts "+(Get-Random) 
 $url = Search-Flickr $topic
