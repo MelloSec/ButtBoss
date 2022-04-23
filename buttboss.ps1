@@ -4,13 +4,13 @@ if((Test-Path $env:OneDrive) -Or (Test-Path $env:OneDriveCommercial)) {
     $desktop = "$env:OneDrive\Desktop"
 }
 
-# Copy Desktop Contents to Goofin for safe keeping
+# Copy Desktop Contents to Goofin for safe keepin
 Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Recurse -Force
 
-# enumerate targets for replacement & grab number of items we need butts for 
+# enumerate targets for replacement & grab number of butts needed for grand plan
 $butts = (gci $home\OneDrive\Desktop\ -Recurse)
 $buttlist = (echo $butts | Get-Member)
-$buttnum = $buttlist.Count
+$buttcount = $buttlist.Count
 
 function Search-Flickr ([string]$tags, [int]$count = 1) 
 {
@@ -27,10 +27,20 @@ if ($url -eq $null -or $url[0] -eq $null) {
 	}
 return $url
 }
-# New try for buttseeds
-# ($lines = (gci buttseeds.txt | Get-Member))
+
+# Random seeds array
+$seeds = Get-Content .\buttseeds.txt
+$hash = @{}
+foreach ($s in $seeds)
+ {
+
+  $hash.add($s,(Get-Random -Maximum $seeds.count))
+
+ }
+$hash.GetEnumerator() | Sort-Object -Property value |
+Get-Random -OutVariable buttseed 
+
 # Main method for obtaining sweet butt shots for grand plan  
-$topic = "juicy butts "+(Get-Random) 
 $url = Search-Flickr $topic
 
 
