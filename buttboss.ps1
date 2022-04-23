@@ -1,14 +1,22 @@
 # Enumerate targets
-# Copy Desktop to Goofin for safe keeping
-Copy-Item -Path "$home\Desktop" -Destination "C:\Goofin\cuts" -Recurse 
+
+# Set Desktop Path, switch to OneDrive path format if OneDrive folder exists
+$desktop = "$home\Desktop"
+if(Test-Path -Path $env:OneDrive) {
+    $desktop = "$env:OneDrive\Desktop"
+}
+
+# $env:OneDriveCommercial
+# $env:OneDriveConsumer
 
 
+# Copy Desktop Contents to Goofin for safe keeping
+Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Recurse -Force
 
-
-if OneDrive installed then
-$targets = (gci $home\OneDrive\Desktop\ -Recurse) 
-$buttnum = echo $targets | Measure-Object
-
+$targets = (gci $home\OneDrive\Desktop\ -Recurse)
+# Grab number of items we need butts for 
+$buttnum = (echo $targets | Get-Member)
+$buttnum = $buttnum.Count
 
 function Search-Flickr ([string]$tags, [int]$count = $buttnum) 
 {
@@ -27,8 +35,7 @@ return $url
 }
 
 # Main method for obtaining sweet butt shots for grand plan  
-$buttno = (Get-Random -Maximum 100) 
-$topic = "juicy butts "+(Get-Random -Maximum 100) 
+$topic = "juicy butts "+(Get-Random) 
 $url = Search-Flickr $topic
 
     for each target in targets
