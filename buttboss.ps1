@@ -2,11 +2,11 @@
 
 # Set Desktop Path, switch to OneDrive path format if OneDrive folder exists
 $desktop = "$home\Desktop"
-if(Test-Path -Path $env:OneDrive) {
+if((Test-Path $env:OneDrive) -Or (Test-Path $env:OneDriveCommercial)) {
     $desktop = "$env:OneDrive\Desktop"
 }
 
-# $env:OneDriveCommercial
+# 
 # $env:OneDriveConsumer
 
 
