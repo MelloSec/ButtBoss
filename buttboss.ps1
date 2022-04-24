@@ -4,34 +4,74 @@ if((Test-Path $env:OneDrive) -Or (Test-Path $env:OneDriveCommercial)) {
     $desktop = "$env:OneDrive\Desktop"
 }
 
-# Copy Desktop Contents to Goofin for safe keeping
+# Copy Desktop Contents to Goofin for safe keepin
 Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Recurse -Force
 
-# enumerate targets for replacement & grab number of items we need butts for 
+# enumerate targets for replacement & grab number of butts needed for grand plan
 $butts = (gci $home\OneDrive\Desktop\ -Recurse)
 $buttlist = (echo $butts | Get-Member)
-$buttnum = $buttlist.Count
+$buttcount = $buttlist.Count
 
-function Search-Flickr ([string]$tags, [int]$count = 1) 
+
+
+# seeds array from text file and  pulls an entry at random, converts to a string and returns
+$seeds = Get-Content .\buttseeds.txt
+$hash = @{}
+foreach ($s in $seeds)
+ {
+  $hash.add($s,(Get-Random -Maximum $seeds.count))
+ }
+$hash.GetEnumerator() | Get-Random -OutVariable buttseed
+$buttseed | out-string | echo
+
+
+# script parameters, feel free to change it 
+$downloadFolder = "C:\Goofin\butts"
+$searchFor =  "sexy ass butts" # $buttseed
+$nrOfImages = $buttcount
+
+# create a WebClient instance that will handle Network communications 
+$webClient = New-Object System.Net.WebClient
+
+# load System.Web so we can use HttpUtility
+Add-Type -AssemblyName System.Web
+
+# URL encode our search query
+$searchQuery = [System.Web.HttpUtility]::UrlEncode($searchFor)
+
+$url = "http://www.bing.com/images/search?q=$searchQuery&first=0&count=$nrOfImages&qft=+filterui%3alicense-L2_L3_L4"
+
+# get the HTML from resulting search response
+$webpage = $webclient.DownloadString($url)
+
+# use a 'fancy' regular expression to finds Urls terminating with '.jpg' or '.png'
+$regex = "[(http(s)?):\/\/(www\.)?a-z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-z0-9@:%_\+.~#?&//=]*)((.jpg(\/)?)|(.png(\/)?)){1}(?!([\w\/]+))"
+
+$listImgUrls = $webpage | Select-String -pattern $regex -Allmatches | ForEach-Object {$_.Matches} | Select-Object $_.Value -Unique
+
+# let's figure out if the folder we will use to store the downloaded images already exists
+if((Test-Path $downloadFolder) -eq $false) 
 {
-    $api_key = "b7f795e33e775e9620fd16a6a7bc68ed"
-    $secret = "6521d819f8202c52"
-    $search = Invoke-RestMethod -Uri "http://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=$api_key&secret=$secret&tags=$tags&extras=url_z&content_type=1&per_page=$count&format=rest" -Method Get
-    $search = [xml] $search
+  Write-Output "Creating '$downloadFolder'..."
 
-Write-Verbose $search.OuterXml
-
-$url = $search.rsp.photos.photo.url_z
-if ($url -eq $null -or $url[0] -eq $null) {
-    return
-	}
-return $url
+  New-Item -ItemType Directory -Path $downloadFolder | Out-Null
 }
-# New try for buttseeds
-# ($lines = (gci buttseeds.txt | Get-Member))
-# Main method for obtaining sweet butt shots for grand plan  
-$topic = "juicy butts "+(Get-Random) 
-$url = Search-Flickr $topic
+
+
+foreach($imgUrlString in $listImgUrls) 
+{
+  [Uri]$imgUri = New-Object System.Uri -ArgumentList $imgUrlString
+
+  # this is a way to extract the image name from the Url
+  $imgFile = [System.IO.Path]::GetFileName($imgUri.LocalPath)
+
+  # build the full path to the target download location
+  $imgSaveDestination = Join-Path $downloadFolder $imgFile
+
+  Write-Output "Downloading '$imgUrlString' to '$imgSaveDestination'..."
+
+  $webClient.DownloadFile($imgUri, $imgSaveDestination)  
+} 
 
 
 
