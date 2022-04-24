@@ -1,5 +1,5 @@
 param(
-[string]$targetFiles = "zip",
+[string]$targetFiles = "",
 [string]$targetRename = "txt",
 [string]$directory = "C:\Goofin"
 )

