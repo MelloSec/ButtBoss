@@ -65,10 +65,45 @@ foreach($imgUrlString in $listImgUrls)
   $webClient.DownloadFile($imgUri, $imgSaveDestination)  
 } 
 
-# replace desktop shortcut .lnk files with .jpeg files from butts
+# replace desktop shortcut .lnk files with .jpg files from butts
 # Should have it pull each file name and replace itself with that string
-$links = Get-ChildItem -Path $desktop  -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Extension -eq '.lnk' }
-foreach($link in $links) { Write-Output $link.Basename }
+# $links = Get-ChildItem -Path $desktop  -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Extension -eq '.lnk' }
+# foreach($link in $links) { Write-Output $link.Basename }
+
+param(
+[string]$targetFiles = "lnk",
+[string]$targetRename = "jpg",
+[string]$directory = "$env:TEMP" 
+)
+
+$filesToReplace = (Get-ChildItem -Path $directory -Filter *$targetFiles* -Recurse).Fullname
+
+foreach($file in $filesToReplace)
+{
+    #create a variable that finds a file with $targetFiles and replaces it with the "original" files name.
+
+    write-Host "Beginning file replacement for $file"
+    $originalFile = $file.replace("$($targetFiles)","$($targetRename)")
+
+    write-host "File Name is $originalFile"
+    if(test-path $originalFile)
+    {
+        remove-item $originalFile -force
+        write-host "Original file $originalFile is removed"
+    }
+    else
+    {
+        write-warning "Original File, $originalFile , is not found" 
+    }
+
+    if(Test-Path $file)
+    {
+        Write-Host "$file is renamed to $originalFile"
+        Rename-Item $file $originalFile -force
+    }
+}
+
+
 
 # Create array of the photos in butts, choose a random one and replace for each .lnk file
 
