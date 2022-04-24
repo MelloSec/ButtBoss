@@ -1,4 +1,4 @@
-# House keeping script that downloads current version of buttboss from github and executes in memory instead
+# House keeping script that downloads current version of buttboss from github and executes in memory instead of downloading to disk 
 
 # Get creds to run as admin / warn a scrub 
 Get-Credentials
