@@ -95,3 +95,4 @@ notepad "C:\Goofin\buttbossin.txt"
 # Persistence Module
 # Schduled task for the script
 # Could we set it to choose a number between 7-20 = x and create a that runs every x days?
+# Could we trigger it off of a specific event number?
