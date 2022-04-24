@@ -4,7 +4,7 @@
 Get-Credentials
 
 # Create goofin/butts goofin/cuts and the seeds for grand plan
-Mkdir "C:\Goofin\butts" -Force
+Mkdir "C:\Goofin\butts"
 Mkdir "C:\Goofin\cuts" 
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/mellonaut/ButtBoss/main/buttseeds.txt" -O "C:\Goofin\butts\buttseeds.txt"
 
