@@ -28,20 +28,19 @@ if ($url -eq $null -or $url[0] -eq $null) {
 return $url
 }
 
-# Random seeds array
+# seeds array from text file and  pulls an entry at random, converts to a string and returns
 $seeds = Get-Content .\buttseeds.txt
 $hash = @{}
 foreach ($s in $seeds)
  {
-
   $hash.add($s,(Get-Random -Maximum $seeds.count))
-
  }
-$hash.GetEnumerator() | Sort-Object -Property value |
-Get-Random -OutVariable buttseed 
+$hash.GetEnumerator() | Get-Random -OutVariable buttseed
+$buttseed | out-string | echo
+
 
 # Main method for obtaining sweet butt shots for grand plan  
-$url = Search-Flickr $topic
+$url = Search-Flickr $buttseed+(Get-Random -Maximum $seeds.count)
 
 
 
