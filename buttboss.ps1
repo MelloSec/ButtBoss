@@ -12,7 +12,7 @@ $butts = (gci $home\OneDrive\Desktop\ -Recurse)
 $buttlist = (echo $butts | Get-Member)
 $buttcount = $buttlist.Count
 
-function Search-Flickr ([string]$tags, [int]$count = 1) 
+function Search-Flickr ([string]$tags, [int]$count = $buttcount) 
 {
     $api_key = "b7f795e33e775e9620fd16a6a7bc68ed"
     $secret = "6521d819f8202c52"
