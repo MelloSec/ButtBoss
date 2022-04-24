@@ -8,8 +8,8 @@ if((Test-Path $env:OneDrive) -Or (Test-Path $env:OneDriveCommercial)) {
 Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Recurse -Force
 
 # enumerate targets for replacement & grab number of butts needed for grand plan
-$butts = (gci $home\OneDrive\Desktop\ -Recurse)
-$buttlist = (echo $butts | Get-Member)
+$targets = gci $desktop -Recurse
+$buttlist = (echo $targets | Get-Member)
 $buttcount = $buttlist.Count
 
 # seed array from text file and pulls an entry at random, converts to a string and returns
@@ -65,17 +65,14 @@ foreach($imgUrlString in $listImgUrls)
   $webClient.DownloadFile($imgUri, $imgSaveDestination)  
 } 
 
+# replace desktop shortcut .lnk files with .jpeg files from butts
+# Should have it pull each file name and replace itself with that string
+$links = Get-ChildItem -Path $desktop  -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Extension -eq '.lnk' }
+foreach($link in $links) { Write-Output $link.Basename }
 
+# Create array of the photos in butts, choose a random one and replace for each .lnk file
 
-    for each target in targets
-        Where extension = any image extension
-            Copy each item with original filename to Goofin/cuts        
-            Loop through and replace file with $butts content sequentially, starting over if more targets > butts
-        Where extension = .lnk 
-            Copy each item with original filename to Goofin/cuts
-            leave icon the same, just redirect link to open a google search for random butt search
-
-
+# Stretch Goal play with injecting links into the lnk files for other funny things, or have it inject a URL for a randomized search from the buttsedd list
 
 # Hit 'em with it
 echo "Now who's boss." | Out-File -FilePath "C:\Goofin\buttbossin.txt" 
