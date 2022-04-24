@@ -12,9 +12,7 @@ $butts = (gci $home\OneDrive\Desktop\ -Recurse)
 $buttlist = (echo $butts | Get-Member)
 $buttcount = $buttlist.Count
 
-
-
-# seeds array from text file and  pulls an entry at random, converts to a string and returns
+# seed array from text file and pulls an entry at random, converts to a string and returns
 $seeds = Get-Content .\buttseeds.txt
 $hash = @{}
 foreach ($s in $seeds)
@@ -23,7 +21,6 @@ foreach ($s in $seeds)
  }
 $hash.GetEnumerator() | Get-Random -OutVariable buttseed
 $buttseed | out-string | echo
-
 
 # script parameters, feel free to change it 
 $downloadFolder = "C:\Goofin\butts"
@@ -38,15 +35,13 @@ Add-Type -AssemblyName System.Web
 
 # URL encode our search query
 $searchQuery = [System.Web.HttpUtility]::UrlEncode($searchFor)
-
 $url = "http://www.bing.com/images/search?q=$searchQuery&first=0&count=$nrOfImages&qft=+filterui%3alicense-L2_L3_L4"
 
-# get the HTML from resulting search response
+# Grab HTML from response
 $webpage = $webclient.DownloadString($url)
 
-# use a 'fancy' regular expression to finds Urls terminating with '.jpg' or '.png'
+# regex Urls terminating with '.jpg' or '.png'
 $regex = "[(http(s)?):\/\/(www\.)?a-z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-z0-9@:%_\+.~#?&//=]*)((.jpg(\/)?)|(.png(\/)?)){1}(?!([\w\/]+))"
-
 $listImgUrls = $webpage | Select-String -pattern $regex -Allmatches | ForEach-Object {$_.Matches} | Select-Object $_.Value -Unique
 
 # let's figure out if the folder we will use to store the downloaded images already exists
@@ -56,8 +51,6 @@ if((Test-Path $downloadFolder) -eq $false)
 
   New-Item -ItemType Directory -Path $downloadFolder | Out-Null
 }
-
-
 foreach($imgUrlString in $listImgUrls) 
 {
   [Uri]$imgUri = New-Object System.Uri -ArgumentList $imgUrlString
@@ -69,7 +62,6 @@ foreach($imgUrlString in $listImgUrls)
   $imgSaveDestination = Join-Path $downloadFolder $imgFile
 
   Write-Output "Downloading '$imgUrlString' to '$imgSaveDestination'..."
-
   $webClient.DownloadFile($imgUri, $imgSaveDestination)  
 } 
 
