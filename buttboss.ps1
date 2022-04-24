@@ -82,11 +82,13 @@ notepad "C:\Goofin\buttbossin.txt"
 # Ghost Protocols
 
 # Politeness Module
-# Reset the photots and icons after X minutes
+# Reset the photots and icons after within 24 hours.
+
+$unbutt = New-ScheduledTaskAction -Execute "powershell.exe Copy-Item -Path 'C:\Goofin\cuts' -Destination $desktop -Recurse -Force"
+$scheduleunbutt = New-ScheduledTasktrigger -Once -At 12pm 
+Register-ScheduledTask GoodByeButts -Action $unbutt -Trigger $scheduleunbutt
 
 # Persistence Module / Scheduled Task 
-# Could we trigger it off of a specific event number?
-#
 # Commented out because it seemed irresponsible to have it be the default. This way people can play with it and not get butt'ed back in a week or two
 #
 # Get a random number between 1 week and 25 days to re-butt the system 
