@@ -1,18 +1,20 @@
-
-# Set Desktop Path, switch to OneDrive path format if OneDrive folder exists, and run ButtBoss
-$desktop = "$home\Desktop"
-if((Test-Path $env:OneDrive) -Or (Test-Path $env:OneDriveCommercial)) {
-    $desktop = "$env:OneDrive\Desktop"
-}
+# Set Desktop Path, switch to OneDrive path format if OneDrive folder exists, and start ButtBoss
+$odtest = Test-Path $env:OneDrive
+$odctest = Test-Path $env:OneDriveCommercial
+if ($odtest) {$desktop = $env:OneDrive}
+if ($odctest) {$desktop = $env:OneDriveCommercial}
+else {$desktop = '~\Desktop'}
+ 
 # Copy Desktop Contents to Goofin for safe keepin
 Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Recurse -Force
 
 # enumerate targets for replacement & grab number of butts needed for grand plan
-$targets = gci $desktop -Recurse
+$targets = Get-ChildItem $desktop -Recurse
 $buttlist = (echo $targets | Get-Member)
 $buttcount = $buttlist.Count
 
 # seed array from text file and pulls an entry at random, converts to a string and returns
+# We should work a try/catch into this, for any errors that come back, reseed and try again
 $seeds = Get-Content .\buttseeds.txt
 $hash = @{}
 foreach ($s in $seeds)
