@@ -1,16 +1,20 @@
-
+# Old test-path version to find the desktop
 # Set Desktop Path, switch to OneDrive path format if OneDrive folder exists, and run ButtBoss
-$desktop = "$home\Desktop"
-if((Test-Path $env:OneDrive) -Or (Test-Path $env:OneDriveCommercial)) {
-    $desktop = "$env:OneDrive\Desktop"
-}
+# $desktop = "$home\Desktop"
+# if((Test-Path $env:OneDrive) -Or (Test-Path $env:OneDriveCommercial)) {
+#     $desktop = "$env:OneDrive\Desktop"
+# }
+
+# StackOverflow replacement to always get the right Desktop path
+$desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
+ 
 # Copy Desktop Contents to Goofin for safe keepin
 Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Recurse -Force
 
 # enumerate targets for replacement & grab number of butts needed for grand plan
-$targets = gci $desktop -Recurse
-$buttlist = (echo $targets | Get-Member)
-$buttcount = $buttlist.Count
+$targets = Get-ChildItem $desktop -Recurse
+$buttList = (echo $targets | Get-Member)
+$buttCount = $buttList.Count
 
 # seed array from text file and pulls an entry at random, converts to a string and returns
 $seeds = Get-Content .\buttseeds.txt
@@ -19,13 +23,13 @@ foreach ($s in $seeds)
  {
   $hash.add($s,(Get-Random -Maximum $seeds.count))
  }
-$hash.GetEnumerator() | Get-Random -OutVariable buttseed
-$buttseed | out-string | echo
+$hash.GetEnumerator() | Get-Random -OutVariable buttSeed
+$buttSearch = $buttSeed.Name
 
-# script parameters, feel free to change it 
+# script parameters
 $downloadFolder = "C:\Goofin\butts"
-$searchFor =  "sexy ass butts" # $buttseed
-$nrOfImages = $buttcount
+$searchFor =  $buttSearch
+$nrOfImages = $buttCount
 
 # create a WebClient instance that will handle Network communications 
 $webClient = New-Object System.Net.WebClient
