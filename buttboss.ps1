@@ -1,19 +1,10 @@
-# Old test-path version to find the desktop
-# Set Desktop Path, switch to OneDrive path format if OneDrive folder exists, and run ButtBoss
-# $desktop = "$home\Desktop"
-# if((Test-Path $env:OneDrive) -Or (Test-Path $env:OneDriveCommercial)) {
-#     $desktop = "$env:OneDrive\Desktop"
-# }
-
-# StackOverflow replacement to always get the right Desktop path
+# Set our current desktop and copy Desktop Contents to Goofin for safe keepin
 $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
- 
-# Copy Desktop Contents to Goofin for safe keepin
-Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Recurse -Force
+Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Force
 
 # enumerate targets for replacement & grab number of butts needed for grand plan
 $targets = Get-ChildItem $desktop
-$buttList = ($targets | Get-Content)
+$buttList = $targets
 $buttCount = $buttList.Count
 
 # seed array from text file and pulls an entry at random, converts to a string and returns
@@ -28,7 +19,7 @@ $buttSearch = $buttSeed.Name
 
 # script parameters
 $downloadFolder = "C:\Goofin\butts"
-$searchFor =  $buttSearch
+$searchFor = $buttSearch
 $numImages = $buttCount
 
 # create a WebClient instance that will handle Network communications 
