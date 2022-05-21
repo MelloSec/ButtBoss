@@ -12,8 +12,8 @@ $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
 Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Recurse -Force
 
 # enumerate targets for replacement & grab number of butts needed for grand plan
-$targets = Get-ChildItem $desktop -Recurse
-$buttList = (echo $targets | Get-Member)
+$targets = Get-ChildItem $desktop
+$buttList = ($targets | Get-Content)
 $buttCount = $buttList.Count
 
 # seed array from text file and pulls an entry at random, converts to a string and returns
@@ -99,19 +99,14 @@ foreach($file in $filesToReplace)
     {
         write-warning "Original File, $originalFile , is not found" 
     }
-
     if(Test-Path $file)
     {
         Write-Host "$file is renamed to $originalFile"
         Rename-Item $file $originalFile -force
     }
 }
-
-
-
 # Create array of the photos in butts, choose a random one and replace for each .lnk file
-
-# Stretch Goal play with injecting links into the lnk files for other funny things, or have it inject a URL for a randomized search from the buttsedd list
+# play with injecting links into the lnk files for other funny things, or have it inject a URL for a randomized search from the buttsedd list
 
 # Hit 'em with it
 # retrieve background image from S3 
@@ -129,28 +124,22 @@ param (
     [string]$Style
 )
  
-$WallpaperStyle = Switch ($Style) {
-  
+$WallpaperStyle = Switch ($Style) { 
     "Fill" {"10"}
     "Fit" {"6"}
     "Stretch" {"2"}
     "Tile" {"0"}
     "Center" {"0"}
-    "Span" {"22"}
-  
+    "Span" {"22"}  
 }
  
 If($Style -eq "Tile") {
- 
     New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -PropertyType String -Value $WallpaperStyle -Force
-    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 1 -Force
- 
+    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 1 -Force 
 }
 Else {
- 
     New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -PropertyType String -Value $WallpaperStyle -Force
-    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 0 -Force
- 
+    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 0 -Force 
 }
  
 Add-Type -TypeDefinition @" 
