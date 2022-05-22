@@ -1,6 +1,6 @@
 # Set our current desktop and copy Desktop Contents to Goofin for safe keepin
 $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
-Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -Force
+Copy-Item -Path $desktop -Destination "C:\Goofin\cuts"
 
 # enumerate targets for replacement & grab number of butts needed for grand plan
 $targets = Get-ChildItem $desktop
