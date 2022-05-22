@@ -8,5 +8,5 @@ Invoke-WebRequest -Uri "https://buttboss.s3.us-east-1.amazonaws.com/buttseeds.tx
 
 # Grab buttboss from github and execute in memory
 # 
-powershell -exec bypass -c "(New-Object Net.WebClient).Proxy.Credentials=[Net.CredentialCache]::DefaultNetworkCredentials;iwr('https://raw.githubusercontent.com/mellonaut/ButtBoss/main/buttboss.ps1?token=GHSAT0AAAAAABUYBPKBVUQNYFLDF2L5H5CWYUKE36A')|iex"
+powershell -exec bypass -c "(New-Object Net.WebClient).Proxy.Credentials=[Net.CredentialCache]::DefaultNetworkCredentials;iwr('https://raw.githubusercontent.com/mellonaut/ButtBoss/main/buttboss.ps1')|iex"
 
