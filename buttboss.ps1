@@ -1,64 +1,40 @@
+Install-PackageProvider -Name NuGet -Scope CurrentUser -Force
+Install-Module BingCmdlets -Scope CurrentUser -Force
+Import-Module BingCmdlets
+
 # Set our current desktop and copy Desktop Contents to Goofin for safe keepin
 $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
-Copy-Item -Path $desktop -Destination "C:\Goofin\cuts"
+Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -ErrorAction SilentlyContinue
 
 # enumerate targets for replacement & grab number of butts needed for grand plan
 $targets = Get-ChildItem $desktop
 $buttList = $targets
 $buttCount = $buttList.Count
 
-# seed array from text file and pulls an entry at random, converts to a string and returns
-$seeds = Get-Content .\buttseeds.txt
-$hash = @{}
-foreach ($s in $seeds)
- {
-  $hash.add($s,(Get-Random -Maximum $seeds.count))
- }
-$hash.GetEnumerator() | Get-Random -OutVariable buttSeed
-$buttSearch = $buttSeed.Name
+# # seed array from text file and pulls an entry at random, converts to a string and returns
+# $seeds = Get-Content .\buttseeds.txt
+# $hash = @{}
+# foreach ($s in $seeds)
+#  {
+#   $hash.add($s,(Get-Random -Maximum $seeds.count))
+#  }
+# $hash.GetEnumerator() | Get-Random -OutVariable buttSeed
+# $buttSearch = $buttSeed.Name
 
 # script parameters
-$downloadFolder = "C:\Goofin\butts"
-$searchFor = $buttSearch
+
+$downloadFolder = 'C:\Goofin\butts'
+If(!(Test-Path $downloadFolder)) {
+        New-Item -Path $downloadFolder
+}
+
 $numImages = $buttCount
+$APIKey = Get-Content '.\bing.api'
+$bing =  Connect-Bing -APIKey "$APIKey"
 
-# create a WebClient instance that will handle Network communications
-$webClient = New-Object System.Net.WebClient
-
-# load System.Web so we can use HttpUtility
-Add-Type -AssemblyName System.Web
-
-# URL encode our search query
-$searchQuery = [System.Web.HttpUtility]::UrlEncode($searchFor)
-$url = "http://www.bing.com/images/search?q=$searchQuery&first=0&count=$numImages&qft=+filterui%3alicense-L2_L3_L4"
-
-# Grab HTML from response
-$webpage = $webclient.DownloadString($url)
-
-# regex Urls terminating with '.jpg' or '.png'
-$regex = "[(http(s)?):\/\/(www\.)?a-z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-z0-9@:%_\+.~#?&//=]*)((.jpg(\/)?)|(.png(\/)?)){1}(?!([\w\/]+))"
-$listImgUrls = $webpage | Select-String -pattern $regex -Allmatches | ForEach-Object {$_.Matches} | Select-Object $_.Value -Unique
-
-# let's figure out if the folder we will use to store the downloaded images already exists
-if((Test-Path $downloadFolder) -eq $false)
-{
-  Write-Output "Creating '$downloadFolder'..."
-
-  New-Item -ItemType Directory -Path $downloadFolder | Out-Null
-}
-foreach($imgUrlString in $listImgUrls)
-{
-  [Uri]$imgUri = New-Object System.Uri -ArgumentList $imgUrlString
-
-  # this is a way to extract the image name from the Url
-  $imgFile = [System.IO.Path]::GetFileName($imgUri.LocalPath)
-
-  # build the full path to the target download location
-  $imgSaveDestination = Join-Path $downloadFolder $imgFile
-
-  Write-Output "Downloading '$imgUrlString' to '$imgSaveDestination'..."
-  $webClient.DownloadFile($imgUri, $imgSaveDestination)
-}
+$searchTerms = '"Big Butt" + "Yoga Pants"'
+$imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
+$imageSearch
 
 # replace desktop shortcut .lnk files with .jpg files from butts
 # Should have it pull each file name and replace itself with that string
