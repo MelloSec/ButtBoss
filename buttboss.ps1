@@ -2,8 +2,12 @@ Install-PackageProvider -Name NuGet -Scope CurrentUser -Force
 Install-Module BingCmdlets -Scope CurrentUser -Force
 Import-Module BingCmdlets
 
-# Set our current desktop and copy Desktop Contents to Goofin for safe keepin
+# Check the backup folder and set current desktop
+$backupFolder = 'C:\Goofin\cuts'
 $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
+If(!(Test-Path $backupFolder)) {
+        New-Item -Path $backupFolder
+}
 Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -ErrorAction SilentlyContinue
 
 # enumerate targets for replacement & grab number of butts needed for grand plan
@@ -21,7 +25,6 @@ $buttCount = $buttList.Count
 # $hash.GetEnumerator() | Get-Random -OutVariable buttSeed
 # $buttSearch = $buttSeed.Name
 
-# script parameters
 
 $downloadFolder = 'C:\Goofin\butts'
 If(!(Test-Path $downloadFolder)) {
@@ -34,7 +37,12 @@ $bing =  Connect-Bing -APIKey "$APIKey"
 
 $searchTerms = '"Big Butt" + "Yoga Pants"'
 $imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
-$imageSearch
+$payload = $imageSearch | select -first "$numImages"
+$urls = $payload | %{$_.ContentUrl}
+foreach ($url in $urls) {
+    Invoke-WebRequest $url -OutFile "$downloadFolder" -Force
+}
+
 
 # replace desktop shortcut .lnk files with .jpg files from butts
 # Should have it pull each file name and replace itself with that string
