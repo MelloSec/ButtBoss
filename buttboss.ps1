@@ -35,6 +35,9 @@ $numImages = $buttCount
 $APIKey = Get-Content '.\bing.api'
 $bing =  Connect-Bing -APIKey "$APIKey"
 
+# Function to pull and work a CSV of phrases
+
+
 $searchTerms = '"Big Butt" + "Yoga Pants"'
 $imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
 $payload = $imageSearch | select -first "$numImages"
@@ -48,40 +51,18 @@ foreach ($url in $urls) {
 # Should have it pull each file name and replace itself with that string
 # $links = Get-ChildItem -Path $desktop  -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Extension -eq '.lnk' }
 # foreach($link in $links) { Write-Output $link.Basename }
-
-param(
+function Replace-Butts {
+    [CmdletBinding(Mandatory)]
+    param(
 [string]$targetFiles = "lnk",
 [string]$targetRename = "jpg",
 [string]$directory = "$env:TEMP"
 )
-
+# Start from scratch
+#
+}
 $filesToReplace = (Get-ChildItem -Path $directory -Filter *$targetFiles* -Recurse).Fullname
 
-foreach($file in $filesToReplace)
-{
-    #create a variable that finds a file with $targetFiles and replaces it with the "original" files name.
-
-    write-Host "Beginning file replacement for $file"
-    $originalFile = $file.replace("$($targetFiles)","$($targetRename)")
-
-    write-host "File Name is $originalFile"
-    if(test-path $originalFile)
-    {
-        remove-item $originalFile -force
-        write-host "Original file $originalFile is removed"
-    }
-    else
-    {
-        write-warning "Original File, $originalFile , is not found"
-    }
-    if(Test-Path $file)
-    {
-        Write-Host "$file is renamed to $originalFile"
-        Rename-Item $file $originalFile -force
-    }
-}
-# Create array of the photos in butts, choose a random one and replace for each .lnk file
-# play with injecting links into the lnk files for other funny things, or have it inject a URL for a randomized search from the buttsedd list
 
 # Hit 'em with it
 # retrieve background image from S3
