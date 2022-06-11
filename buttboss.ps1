@@ -5,42 +5,29 @@ Import-Module BingCmdlets
 # Check the backup folder and set current desktop
 $backupFolder = 'C:\Goofin\cuts'
 $desktop = [Environment]::GetFolderPath([Environment+SpecialFolder]::Desktop)
+$targets = Get-childitem $desktop
 If(!(Test-Path $backupFolder)) {
-        New-Item -Path $backupFolder
+        New-Item -Path $backupFolder -ItemType directory
 }
-Copy-Item -Path $desktop -Destination "C:\Goofin\cuts" -ErrorAction SilentlyContinue
+foreach ($t in $targets.FullName){Copy-Item $t $backupFolder -ErrorAction SilentlyContinue}
+
 
 # enumerate targets for replacement & grab number of butts needed for grand plan
-$targets = Get-ChildItem $desktop
-$buttList = $targets
-$buttCount = $buttList.Count
-
-# # seed array from text file and pulls an entry at random, converts to a string and returns
-# $seeds = Get-Content .\buttseeds.txt
-# $hash = @{}
-# foreach ($s in $seeds)
-#  {
-#   $hash.add($s,(Get-Random -Maximum $seeds.count))
-#  }
-# $hash.GetEnumerator() | Get-Random -OutVariable buttSeed
-# $buttSearch = $buttSeed.Name
-
+$buttCount = $targets.Count
 
 $downloadFolder = 'C:\Goofin\butts'
 If(!(Test-Path $downloadFolder)) {
-        New-Item -Path $downloadFolder
+        New-Item -Path $downloadFolder -ItemType directory
 }
 
-$numImages = $buttCount
 $APIKey = Get-Content '.\bing.api'
 $bing =  Connect-Bing -APIKey "$APIKey"
 
-# Function to pull and work a CSV of phrases
 
 
 $searchTerms = '"Big Butt" + "Yoga Pants"'
 $imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
-$payload = $imageSearch | select -first "$numImages"
+$payload = $imageSearch | select -first "$buttCount"
 $urls = $payload | %{$_.ContentUrl}
 foreach ($url in $urls) {
     Invoke-WebRequest $url -OutFile "$downloadFolder" -Force
