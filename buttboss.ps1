@@ -30,7 +30,8 @@ $imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "Search
 $payload = $imageSearch | select -first "$buttCount"
 $urls = $payload | %{$_.ContentUrl}
 foreach ($url in $urls) {
-    Invoke-WebRequest $url -OutFile "$downloadFolder" -Force
+    $path = join-path $downloadFolder $url
+    Invoke-WebRequest $url -OutFile $path.ToString()
 }
 
 
