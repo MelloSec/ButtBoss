@@ -23,16 +23,38 @@ If(!(Test-Path $downloadFolder)) {
 $APIKey = Get-Content '.\bing.api'
 $bing =  Connect-Bing -APIKey "$APIKey"
 
-
-
 $searchTerms = '"Big Butt" + "Yoga Pants"'
-$imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
-$payload = $imageSearch | select -first "$buttCount"
-$urls = $payload | %{$_.ContentUrl}
-foreach ($url in $urls) {
-    $path = join-path $downloadFolder $url
-    Invoke-WebRequest $url -OutFile $path.ToString()
-}
+
+    function Acquire-Butts {
+        [CmdletBinding()]
+        param(
+            [Parameter(Mandatory)]
+            [string]$searchTerms
+        )
+	$IPObject = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
+
+[PSCustomObject]@{
+
+            Title              	=  $IPObject.Title   
+            ContentUrl        	=  $IPObject.ContentUrl 
+            HostPageUrl         =  $IPObject.HostPageUrl
+            ThumbNailUrl        =  $IPObject.ThumbNailUrl 
+            Size             	=  $IPObject.Size 
+            Width            	=  $IPObject.Width
+            Weight           	=  $IPObject.Weight
+            DatePublished       =  $IPObject.DatePublished
+        }
+    }
+$Object = Acquire-Butts $searchTerms
+
+# $searchTerms = '"Big Butt" + "Yoga Pants"'
+# $imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
+# $payload = $imageSearch | select -first "$buttCount"
+# $urls = $payload | %{$_.ContentUrl}
+# foreach ($url in $urls) {
+#     $path = join-path $downloadFolder $url
+#     Invoke-WebRequest
+# }
 
 
 # replace desktop shortcut .lnk files with .jpg files from butts
@@ -42,7 +64,7 @@ foreach ($url in $urls) {
 function Replace-Butts {
     [CmdletBinding(Mandatory)]
     param(
-[string]$targetFiles = "lnk",
+[string]$targetFiles = "*",
 [string]$targetRename = "jpg",
 [string]$directory = "$env:TEMP"
 )
