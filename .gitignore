@@ -1,3 +1,5 @@
 bing.api
 /junk
-/functions
+/functions/
+\functions\
+functions
