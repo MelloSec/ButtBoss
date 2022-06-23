@@ -9,7 +9,8 @@ $targets = Get-childitem $desktop
 If(!(Test-Path $backupFolder)) {
         New-Item -Path $backupFolder -ItemType directory
 }
-foreach ($t in $targets.FullName){Copy-Item $t $backupFolder -ErrorAction SilentlyContinue}
+# if ( Test-Path "$env:LOCALAPPDATA\Microsoft\OneDrive\OneDrive.exe" ) { Get-ChildItem $desktop | foreach($d in $desktop) { Move-Item -Path $backupFolder }}
+$backups = foreach ($t in $targets.FullName){Copy-Item $t $backupFolder -ErrorAction SilentlyContinue}
 
 
 # enumerate targets for replacement & grab number of butts needed for grand plan
@@ -43,16 +44,7 @@ foreach ($url in $urls){
 }
 
 
-function Replace-Butts {
-    [CmdletBinding(Mandatory)]
-    param(
-[string]$targetFiles = "*",
-[string]$targetRename = "jpg",
-[string]$directory = "$env:TEMP"
-)
-# Start from scratch
-#
-}
+# We need to verify that the desktop items are backed up.
 $filesToReplace = (Get-ChildItem -Path $directory -Filter *$targetFiles* -Recurse).Fullname
 
 
