@@ -9,7 +9,8 @@ $targets = Get-childitem $desktop
 If(!(Test-Path $backupFolder)) {
         New-Item -Path $backupFolder -ItemType directory
 }
-# if ( Test-Path "$env:LOCALAPPDATA\Microsoft\OneDrive\OneDrive.exe" ) { Get-ChildItem $desktop | foreach($d in $desktop) { Move-Item -Path $backupFolder }}
+# if ( Test-Path "$env:LOCALAPPDATA\Microsoft\OneDrive\OneDrive.exe" ) 
+# $backups = foreach ($t in $targets.FullName){Move-Item $t C:\Goofin\cuts -ErrorAction SilentlyContinue}
 $backups = foreach ($t in $targets.FullName){Copy-Item $t $backupFolder -ErrorAction SilentlyContinue}
 
 
