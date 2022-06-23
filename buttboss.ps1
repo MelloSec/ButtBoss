@@ -23,7 +23,7 @@ If(!(Test-Path $downloadFolder)) {
 $APIKey = Get-Content '.\bing.api'
 $bing =  Connect-Bing -APIKey "$APIKey"
 
-$searchTerms = '"Big Butt" + "Yoga Pants"'
+# $searchTerms = '"Big Butt" + "Yoga Pants"'
 
 #     function Acquire-Butts {
 #         [CmdletBinding()]
@@ -49,11 +49,13 @@ $searchTerms = '"Big Butt" + "Yoga Pants"'
 
 $searchTerms = '"Big Butt" + "Yoga Pants"'
 $imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
-$payload = $imageSearch | select -first "$buttCount"
+$payload = ($imageSearch | select -first "$buttCount")
+
 $urls = $payload | %{$_.ContentUrl}
 foreach ($url in $urls) {
     $path = join-path $downloadFolder $url
-    Invoke-WebRequest
+    $objs = Invoke-WebRequest -uri "$url" -Outfile "./test/$i.png"
+    
 }
 
 
