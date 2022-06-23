@@ -23,44 +23,22 @@ If(!(Test-Path $downloadFolder)) {
 $APIKey = Get-Content '.\bing.api'
 $bing =  Connect-Bing -APIKey "$APIKey"
 
+
 $searchTerms = '"Big Butt" + "Yoga Pants"'
+$imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
+$payload = ($imageSearch | select -first "$buttCount")
 
-    function Acquire-Butts {
-        [CmdletBinding()]
-        param(
-            [Parameter(Mandatory)]
-            [string]$searchTerms
-        )
-	$IPObject = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
+$urls = $payload | %{$_.ContentUrl}
+foreach ($url in $urls){
 
-[PSCustomObject]@{
-
-            Title              	=  $IPObject.Title   
-            ContentUrl        	=  $IPObject.ContentUrl 
-            HostPageUrl         =  $IPObject.HostPageUrl
-            ThumbNailUrl        =  $IPObject.ThumbNailUrl 
-            Size             	=  $IPObject.Size 
-            Width            	=  $IPObject.Width
-            Weight           	=  $IPObject.Weight
-            DatePublished       =  $IPObject.DatePublished
-        }
-    }
-$Object = Acquire-Butts $searchTerms
-
-# $searchTerms = '"Big Butt" + "Yoga Pants"'
-# $imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
-# $payload = $imageSearch | select -first "$buttCount"
-# $urls = $payload | %{$_.ContentUrl}
-# foreach ($url in $urls) {
-#     $path = join-path $downloadFolder $url
-#     Invoke-WebRequest
-# }
+    $path = join-path $downloadFolder $url
+    $path = $path -replace '[^\p{L}\p{Nd}]', ''
+    $objs = Invoke-WebRequest -uri "$url" -Outfile "./test/$path.jpg" 
+    
+    
+}
 
 
-# replace desktop shortcut .lnk files with .jpg files from butts
-# Should have it pull each file name and replace itself with that string
-# $links = Get-ChildItem -Path $desktop  -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.Extension -eq '.lnk' }
-# foreach($link in $links) { Write-Output $link.Basename }
 function Replace-Butts {
     [CmdletBinding(Mandatory)]
     param(
