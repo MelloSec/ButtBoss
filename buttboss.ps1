@@ -20,22 +20,26 @@ If(!(Test-Path $downloadFolder)) {
         New-Item -Path $downloadFolder -ItemType directory
 }
 
+# Load our key for bing search and authenticate to the API
 $APIKey = Get-Content '.\bing.api'
 $bing =  Connect-Bing -APIKey "$APIKey"
 
 
+# Search terms for the image search. This will become the seed phrase CSV once we get everything working 
 $searchTerms = '"Big Butt" + "Yoga Pants"'
+
+# Grab our results from bing and select the only the number matching the desktop items we backed up
 $imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
 $payload = ($imageSearch | select -first "$buttCount")
 
+
+# Create the loop that strips the url property from the PSObject and creates a save path for each image we need
 $urls = $payload | %{$_.ContentUrl}
 foreach ($url in $urls){
 
     $path = join-path $downloadFolder $url
     $path = $path -replace '[^\p{L}\p{Nd}]', ''
-    $objs = Invoke-WebRequest -uri "$url" -Outfile "./test/$path.jpg" 
-    
-    
+    $butts = Invoke-WebRequest -uri "$url" -Outfile "./test/$path.jpg"  
 }
 
 
