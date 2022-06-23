@@ -62,8 +62,12 @@ function Change-Background ([string]$buttBackground)
 Change-Background $buttBackground
 
 # Write the ransom note, pop notepad, Invoke-Chills
-echo "Now who's boss." | Out-File -FilePath "C:\Goofin\buttbossin.txt"
-notepad "C:\Goofin\buttbossin.txt"
+function Invoke-Chills {
+    echo "Now who's boss." | Out-File -FilePath "C:\Goofin\buttbossin.txt"
+    notepad "C:\Goofin\buttbossin.txt"
+}
+Invoke-Chills
+
 
 # Politeness Module
 # Reset the photots and icons after within 24 hours.
