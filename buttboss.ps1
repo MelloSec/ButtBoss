@@ -25,36 +25,36 @@ $bing =  Connect-Bing -APIKey "$APIKey"
 
 $searchTerms = '"Big Butt" + "Yoga Pants"'
 
-    function Acquire-Butts {
-        [CmdletBinding()]
-        param(
-            [Parameter(Mandatory)]
-            [string]$searchTerms
-        )
-	$IPObject = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
+#     function Acquire-Butts {
+#         [CmdletBinding()]
+#         param(
+#             [Parameter(Mandatory)]
+#             [string]$searchTerms
+#         )
+# 	$IPObject = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
 
-[PSCustomObject]@{
+# [PSCustomObject]@{
 
-            Title              	=  $IPObject.Title   
-            ContentUrl        	=  $IPObject.ContentUrl 
-            HostPageUrl         =  $IPObject.HostPageUrl
-            ThumbNailUrl        =  $IPObject.ThumbNailUrl 
-            Size             	=  $IPObject.Size 
-            Width            	=  $IPObject.Width
-            Weight           	=  $IPObject.Weight
-            DatePublished       =  $IPObject.DatePublished
-        }
-    }
-$Object = Acquire-Butts $searchTerms
+#             Title              	=  $IPObject.Title   
+#             ContentUrl        	=  $IPObject.ContentUrl 
+#             HostPageUrl         =  $IPObject.HostPageUrl
+#             ThumbNailUrl        =  $IPObject.ThumbNailUrl 
+#             Size             	=  $IPObject.Size 
+#             Width            	=  $IPObject.Width
+#             Weight           	=  $IPObject.Weight
+#             DatePublished       =  $IPObject.DatePublished
+#         }
+#     }
+# $Object = Acquire-Butts $searchTerms
 
-# $searchTerms = '"Big Butt" + "Yoga Pants"'
-# $imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
-# $payload = $imageSearch | select -first "$buttCount"
-# $urls = $payload | %{$_.ContentUrl}
-# foreach ($url in $urls) {
-#     $path = join-path $downloadFolder $url
-#     Invoke-WebRequest
-# }
+$searchTerms = '"Big Butt" + "Yoga Pants"'
+$imageSearch = Select-Bing -Connection $bing -Table "ImageSearch" -Where "SearchTerms = `'$searchTerms`'"
+$payload = $imageSearch | select -first "$buttCount"
+$urls = $payload | %{$_.ContentUrl}
+foreach ($url in $urls) {
+    $path = join-path $downloadFolder $url
+    Invoke-WebRequest
+}
 
 
 # replace desktop shortcut .lnk files with .jpg files from butts
